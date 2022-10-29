@@ -9,11 +9,7 @@ import 'package:lab10/loginScreens/Log_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  //get uid
-  Future<String> getCurrintUID() async {
-    return await _auth.currentUser!.uid;
-  }
-
+  
 // login  with email and password
   Future logInWithEmailAndPassword(
       String email, String password, context) async {
@@ -31,17 +27,7 @@ class AuthService {
     }
   }
 
-  //logIn With UserName And Password
-  Future logInWithUserNameAndPassword(
-      String userName, String password, context) async {
-    QuerySnapshot snap = await FirebaseFirestore.instance
-        .collection("UsersData")
-        .where("username", isEqualTo: userName)
-        .get();
-
-    await _auth.signInWithEmailAndPassword(
-        email: snap.docs[0]["email"], password: password);
-  }
+  
 
   // signUp with email and password
   Future signUpWithEmailAndPassword(
@@ -84,66 +70,5 @@ class AuthService {
     }
   }
 
-  //Determine if the user is authenticated.
-  handleAuthState() {
-    return StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData) {
-            return Home();
-          } else {
-            return const Login();
-          }
-        });
-  }
-
-  //google login
-  // Future<UserCredential> signInWithGoogle() async {
-  //   final GoogleSignInAccount? googleUser =
-  //       await GoogleSignIn(scopes: <String>["email"]).signIn();
-
-  //   final GoogleSignInAuthentication? googleAuth =
-  //       await googleUser?.authentication;
-
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
-
-  // sign out
-  Future signOut(context) async {
-    try {
-      await _auth.signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => const Login(),
-        ),
-      );
-    } catch (error) {
-      print(error.toString());
-    }
-  }
-
-  signout() {
-    FirebaseAuth.instance.signOut();
-  }
-
-  Future getUserData() async {
-    return FirebaseFirestore.instance
-        .collection("UsersData")
-        .where("email", isEqualTo: _auth.currentUser!.email)
-        .get();
-  }
-
-  Future resetPassword(String email) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } catch (err) {
-      throw err;
-    }
-  }
+  
 }
